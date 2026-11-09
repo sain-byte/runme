@@ -1,50 +1,117 @@
+
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Log Run - Hussain</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="manifest" href="./site.webmanifest">
 <link rel="shortcut icon" href="./favicon.ico">
-<style>html,body{margin:0;height:100%;background:#08080A;color:#9F9FA9;font:12px system-ui,sans-serif}#ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}#ld button{padding:6px 14px;border-radius:10px;border:1px solid #333;background:#101011;color:#EDEDED;cursor:pointer}</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Anton&family=Oswald:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080A;--card:#101011;--card-hover:#171718;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);--text:#EDEDED;--muted:#9F9FA9;--lime:#D6FF57;--lime-soft:rgba(214,255,87,0.14)}
+.light{--bg:#F6F6F5;--card:#FFFFFF;--card-hover:#F4F4F5;--border:#E8E8E3;--border-strong:#D4D4D0;--text:#111113;--muted:#78787C;--lime:#65A30D;--lime-soft:rgba(101,163,13,0.14)}
+*{font-family:Inter,system-ui,sans-serif;box-sizing:border-box} 
+html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+.mono{font-family:"JetBrains Mono",monospace}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px; max-width: 100%;}
+.input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:7px 10px;font-size:13px;outline:none;color:var(--text)}
+.input:focus{border-color:var(--lime);box-shadow:0 0 0 3px var(--lime-soft)}
+.btn{padding:6px 12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.btn:hover{border-color:var(--border-strong)} .btn-lime{background:var(--lime);color:#08080A;border-color:var(--lime);font-weight:700}
+.btn-icon{width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-grad{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#08080A;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.1), inset 0 0 0 1px rgba(255,255,255,.08)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--border)}
+.glass{backdrop-filter:blur(16px);background:color-mix(in srgb,var(--card) 84%, transparent);border:1px solid var(--border)}
+.btn.on{border-color:var(--lime);background:var(--lime-soft)}
+.chk{background-image:linear-gradient(45deg,#8883 25%,transparent 25%),linear-gradient(-45deg,#8883 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#8883 75%),linear-gradient(-45deg,transparent 75%,#8883 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
+@media(max-width:639px){.icon-grad.ic-hide{display:none}}
+.card-st{background:linear-gradient(135deg,var(--lime-soft),transparent 65%),var(--card);border-color:color-mix(in srgb,var(--lime) 28%,transparent)}
+.card-pb{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(251,191,36,.04) 70%),var(--card);border-color:rgba(251,191,36,.35)}
+.card-pb .pbl,.card-pb .pbv{color:#F59E0B}
+.light .card-pb .pbl,.light .card-pb .pbv{color:#B45309}
+.card-pb.empty{background:var(--card);border-color:var(--border);opacity:.6}
+.card-pb.empty .pbl,.card-pb.empty .pbv{color:var(--muted)}
+</style>
 </head>
-<body>
-<div id="ld"><span id="lm">Memuat...</span></div>
-<script>
-// Loader tipis: ambil page.html dari GAS, cache di localStorage (tampil cepat), cek versi di belakang.
-// Semua di dalam fungsi supaya tidak ada const/let global yang bentrok dengan page.html.
-(function(){
-  var API = 'https://script.google.com/macros/s/AKfycbxRM5j6PF7gLAD_DfIIeiOdtDMF9pblJAV5IaX3gl5qAz8RlR-b6OilGtfv-EgFEg0YmQ/exec';
-  var KH = 'pg_html', KV = 'pg_ver';
-  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-  function put(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
-  function run(html){ document.open(); document.write(html); document.close(); }
-  function fail(msg){ document.getElementById('ld').innerHTML = '<span>'+msg+'</span><button onclick="location.reload()">Coba lagi</button>'; }
-  async function fetchPage(v){
-    var r = await fetch(API + '?action=page' + (v ? '&v=' + encodeURIComponent(v) : ''));
-    return r.json();
-  }
-  (async function(){
-    var cached = get(KH), ver = get(KV);
-    if (cached) {
-      run(cached);
-      try {
-        var j = await fetchPage(ver);
-        if (j.ok && !j.same && j.html) { put(KH, j.html); put(KV, j.ver); location.reload(); }
-      } catch(e) {}
-      return;
-    }
-    try {
-      var j2 = await fetchPage('');
-      if (!j2.ok || !j2.html) return fail(j2.error || 'page.html gagal dimuat');
-      put(KH, j2.html); put(KV, j2.ver);
-      run(j2.html);
-    } catch(e) { fail('Gagal memuat, cek koneksi'); }
-  })();
-})();
-</script>
+<body class="w-full overflow-x-hidden">
+<div id="login" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="card max-w-[360px] w-full p-5 space-y-4">
+    <div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-[8px] bg-[var(--lime)] text-black flex items-center justify-center font-black text-[13px]">R5K°</div><div><div class="text-[15px] font-bold">Log Run - Hussain</div><div class="text-[12px] opacity-50">Project 5K</div></div></div>
+    <div><h1 class="text-[20px] font-bold leading-none">Masuk</h1><p class="text-[13px] opacity-60 mt-1">Login untuk akses fitur edit & admin</p></div>
+    <input id="pw" type="password" placeholder="Password" class="input">
+    <p id="err" class="text-rose-500 text-[13px] min-h-[14px]"></p>
+    <button id="go" class="btn btn-lime w-full h-9">Masuk →</button>
+  </div>
+</div>
+
+<div id="app" class="w-full max-w-[1440px] mx-auto p-2.5 space-y-2.5 overflow-x-hidden">
+  <div class="glass sticky top-2 z-20 rounded-xl px-2.5 h-12 flex items-center justify-between w-full">
+    <div class="flex items-center gap-2 min-w-0"><div class="w-7 h-7 shrink-0 rounded-[8px] bg-[var(--lime)] text-black flex items-center justify-center font-black text-[12px]">R5K°</div><div class="min-w-0"><div class="text-[14px] sm:text-[15px] font-bold leading-tight truncate">Log Run - Hussain</div><div class="flex items-center gap-1.5"><span class="text-[10px] sm:text-[11px] opacity-50 tracking-widest uppercase">Project 5K</span><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span id="role" class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border border-[var(--border)] uppercase font-bold opacity-70">VIEW</span></div></div></div>
+    <div class="flex items-center gap-1"><button id="themeToggle" class="btn-icon">🌗</button><button class="btn-icon hidden sm:flex" onclick="expCsv()" title="CSV">◧</button><button class="btn-icon" onclick="load()" title="Muat ulang">↻</button><button id="authBtn" class="btn" onclick="authClick()">Login</button></div>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-[150px_170px_1fr] gap-2 w-full">
+    <select id="fd" class="input h-8 text-[13px]"><option value="all">Semua jarak</option><option value="lt_49">< 5K</option><option value="5k">5K</option><option value="mid">5K - 10 km</option><option value="gt10">> 10 km</option></select>
+    <select id="ft" class="input h-8 text-[13px]"><option value="all">Semua waktu</option><option value="this_week">Minggu ini</option><option value="last_week">Minggu lalu</option><option value="this_month">Bulan ini</option><option value="last_month">Bulan lalu</option><option value="this_year">Tahun ini</option><option value="last_year">Tahun kemarin</option><optgroup id="ftm" label="Per bulan"></optgroup></select>
+    <div class="col-span-2 sm:col-span-1 flex gap-2 w-full"><input id="q" placeholder="Cari tanggal, catatan…" class="input h-8 text-[13px] flex-1" oninput="renderTable()"><button class="btn h-8 shrink-0 whitespace-nowrap" onclick="openShare()">🖼 Story</button></div>
+  </div>
+  <p id="msg" class="text-[13px] text-amber-400 min-h-[12px] px-1"></p>
+  <div id="stats" class="grid grid-cols-3 lg:grid-cols-6 gap-1.5 w-full"></div>
+  <div id="pb" class="grid grid-cols-6 lg:grid-cols-5 gap-1.5 w-full"></div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-1.5 w-full">
+    <div class="card p-2"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Jarak / sesi</div><div class="h-[150px]"><canvas id="c1"></canvas></div></div>
+    <div class="card p-2"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Pace</div><div class="h-[150px]"><canvas id="c2"></canvas></div></div>
+    <div class="card p-2"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Heart rate</div><div class="h-[150px]"><canvas id="c3"></canvas></div></div>
+    <div class="card p-2"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Cadence</div><div class="h-[150px]"><canvas id="c4"></canvas></div></div>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 w-full">
+    <div class="card p-2 lg:col-span-2"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Volume bulanan</div><div class="h-[150px]"><canvas id="c5"></canvas></div></div>
+    <div class="card p-2" id="kat"></div>
+  </div>
+  
+  <div class="adm hidden card p-2.5 space-y-2 w-full">
+    <textarea id="kal" rows="2" placeholder="Lari tgl 27 Agu 2026, jarak 5.19 km, waktu 40:13, pace 7:45..." class="input !h-auto py-2 resize-none"></textarea>
+    <div class="flex gap-1.5"><button class="btn btn-lime h-7" onclick="auto()">Auto-isi</button><button class="btn h-7" onclick="openForm()">+ Manual</button></div>
+  </div>
+
+  <!-- Desktop table -->
+  <div class="hidden lg:block card overflow-x-auto p-0 w-full">
+    <table class="w-full text-[13px] whitespace-nowrap"><thead class="text-[12px] uppercase tracking-widest opacity-50 border-b" style="border-color:var(--border)"><tr><th class="p-2 font-medium">Tanggal</th><th class="p-2 font-medium">Kategori</th><th class="p-2 font-medium">Jarak</th><th class="p-2 font-medium">Waktu</th><th class="p-2 font-medium">Pace</th><th class="p-2 font-medium">HR</th><th class="p-2 font-medium">Cad</th><th class="p-2 font-medium">VO2</th><th class="p-2 font-medium">Catatan</th><th class="adm hidden p-2">Aksi</th></tr></thead><tbody id="tb"></tbody></table>
+  </div>
+  <!-- Mobile cards -->
+  <div class="lg:hidden space-y-2 w-full" id="tbCards"></div>
+
+  <div class="card p-2 w-full overflow-x-auto"><div class="text-[12px] font-bold tracking-widest uppercase opacity-50 mb-2">Riwayat PB</div><table class="w-full text-[13px] text-left"><thead class="text-[12px] uppercase opacity-50 border-b" style="border-color:var(--border)"><tr><th class="p-2">Tanggal</th><th class="p-2">PB</th><th class="p-2">Jarak</th><th class="p-2">Waktu</th><th class="p-2">Pace</th></tr></thead><tbody id="pbh"></tbody></table></div>
+  <div class="text-center py-2 text-[12px] opacity-30">© 2026 R5K° • Project 5K</div>
+</div>
+
+<div id="pbM" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50" onclick="if(event.target===this)this.classList.add('hidden')"><div class="card w-full max-w-[520px] p-4 space-y-3 max-h-[85vh] overflow-auto rounded-b-none sm:rounded-b-[12px]"><div class="flex items-center justify-between"><b id="pbT" class="text-[15px] font-bold"></b><button class="btn-icon" onclick="$('pbM').classList.add('hidden')">&times;</button></div><div id="pbB"></div></div></div>
+
+<div id="modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50">
+  <div class="card max-w-[520px] w-full p-4 space-y-3 max-h-[90vh] overflow-auto"><b id="mt" class="text-[15px] font-bold"></b><div id="ff" class="grid grid-cols-2 gap-2"></div><div class="flex gap-2 justify-end pt-2"><button class="btn" onclick="$('modal').classList.add('hidden')">Batal</button><button id="sv" class="btn btn-lime" onclick="save()">Simpan</button></div></div>
+</div>
+
+<div id="shM" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="card w-full max-w-[520px] p-4 space-y-3 max-h-[92vh] overflow-auto rounded-b-none sm:rounded-b-[12px]">
+    <div class="flex items-center justify-between"><b class="text-[15px] font-bold">🖼 Gambar story</b><button class="btn-icon" onclick="$('shM').classList.add('hidden')">✕</button></div>
+    <select id="shS" class="input h-8" onchange="shDraw()"></select>
+    <div id="shW" class="chk rounded-xl p-2 flex justify-center"><canvas id="shC" style="max-width:100%;max-height:38vh"></canvas></div>
+    <div class="flex items-center justify-between text-[12px] opacity-70"><span>Latar preview</span><button class="btn !py-1" onclick="shBg()"><span id="shBgL">Kotak-kotak</span></button></div>
+    <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Template</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="tpl" data-v="poster" onclick="shSet('tpl','poster')">Poster (Anton)</button><button class="btn" data-g="tpl" data-v="strava" onclick="shSet('tpl','strava')">Grid (gaya Strava)</button></div></div>
+    <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Gaya</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="st" data-v="white" onclick="shSet('st','white')">Putih</button><button class="btn" data-g="st" data-v="black" onclick="shSet('st','black')">Hitam</button><button class="btn" data-g="st" data-v="wob" onclick="shSet('st','wob')">Putih • outline hitam</button><button class="btn" data-g="st" data-v="bow" onclick="shSet('st','bow')">Hitam • outline putih</button></div></div>
+    <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Ekspor</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="mode" data-v="tight" onclick="shSet('mode','tight')">Potong presisi</button><button class="btn" data-g="mode" data-v="full" onclick="shSet('mode','full')">Full portrait 9:16</button></div></div>
+    <div id="shYW" class="hidden"><div class="flex justify-between text-[12px] opacity-70 mb-1"><span>Posisi (jarak dari bawah)</span><span id="shYL">440 px</span></div><input id="shY" type="range" min="300" max="700" step="10" value="440" class="w-full" oninput="shDraw()"></div>
+    <div class="flex gap-2"><button class="btn flex-1" onclick="shDl()">Unduh PNG</button><button class="btn btn-lime flex-1" onclick="shShare()">Share</button></div>
+  </div>
+</div>
+
+<script src="./logic.js?v=3"></script>
 </body>
 </html>
