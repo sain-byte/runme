@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log Run - Hussain</title>
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="shortcut icon" href="./favicon.ico">
+<style>html,body{margin:0;height:100%;background:#08080A;color:#9F9FA9;font:12px system-ui,sans-serif}#ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}#ld button{padding:6px 14px;border-radius:10px;border:1px solid #333;background:#101011;color:#EDEDED;cursor:pointer}</style>
+</head>
+<body>
+<div id="ld"><span id="lm">Memuat...</span></div>
+<script>
+// Loader tipis: ambil page.html dari GAS, cache di localStorage (tampil cepat), cek versi di belakang.
+// Semua di dalam fungsi supaya tidak ada const/let global yang bentrok dengan page.html.
+(function(){
+  var API = 'https://script.google.com/macros/s/AKfycbxRM5j6PF7gLAD_DfIIeiOdtDMF9pblJAV5IaX3gl5qAz8RlR-b6OilGtfv-EgFEg0YmQ/exec';
+  var KH = 'pg_html', KV = 'pg_ver';
+  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function put(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function run(html){ document.open(); document.write(html); document.close(); }
+  function fail(msg){ document.getElementById('ld').innerHTML = '<span>'+msg+'</span><button onclick="location.reload()">Coba lagi</button>'; }
+  async function fetchPage(v){
+    var r = await fetch(API + '?action=page' + (v ? '&v=' + encodeURIComponent(v) : ''));
+    return r.json();
+  }
+  (async function(){
+    var cached = get(KH), ver = get(KV);
+    if (cached) {
+      run(cached);
+      try {
+        var j = await fetchPage(ver);
+        if (j.ok && !j.same && j.html) { put(KH, j.html); put(KV, j.ver); location.reload(); }
+      } catch(e) {}
+      return;
+    }
+    try {
+      var j2 = await fetchPage('');
+      if (!j2.ok || !j2.html) return fail(j2.error || 'page.html gagal dimuat');
+      put(KH, j2.html); put(KV, j2.ver);
+      run(j2.html);
+    } catch(e) { fail('Gagal memuat, cek koneksi'); }
+  })();
+})();
+</script>
+</body>
+</html>
