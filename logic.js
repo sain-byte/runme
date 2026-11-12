@@ -157,7 +157,8 @@ function catInfo(k){
 const G = {st: 'white', tpl: 'poster', mode: 'tight', bg: 0, fonts: null, logo: null};
 const SH_LOGO = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABNIAAAEJCAYAAABRzgqYAAEAAElEQVR42uydd5gsV3H2f90TdvdeZSQUCJLIQkggcrTIOeecDZhkbGycsMGZDyfAAWNjcgabaMCYHEXOOYggoYjyvXd3Z6b7+6NOuavP9qTd3tme2XqfZ56dndBz+oQ6Ve+pkOR5jqN2JEAKZEBuXssrPtMGloAV4FDgcOCa4e/hQBfoAxcDPwV+DlwYrrUGXBH+2ut2gEF4MOT3HQ6Hw+FwOBwOh8PhcDgcUyBxIm0mSIEWQmRlCGl2DHAScAvg5sDxwHL4/GHhMx0dp/D3MuAi4FfhWucDnwc+DvwQuBTYb363E35vEK6RhP8dDofD4XA4HA6Hw+FwOBxTwom07UEXWK94fhXghsBjEa+zayBeaCBeZ0n4vEK9ypSI09faQA8h03LgcuBM4D3A2xGvtQPh8y0Kz7R2eO6D7nA4HA6Hw+FwOBwOh8MxJZxI2z5Y0up44P7AA4FTEM8z9T5TYkyRUw7DTMzr9v8MIdhAiLouEub5LeD/AZ9GQkC7bAzzdDgcDofD4XA4HA6Hw+FwTAkn0ob0C6O9ttTLSPOgYZ7r3y4SorkUhEC7JhJqqQSaepNprjTM68kUbc3NQ3OynQe8BPg3xNNtdUibHQ6Hw+FwOBwOh8PhcDgcE8KJtK2hjRBVUCbSVoAnAfcCboMUE0jCZ7XAwFaItPgzecXjQuCfgBeH/weUwzwdDofD4XA4HA6Hw+FwOBxToO1dsCko8aUkWgfJWbYCnAz8HnBr4Kjw3hpFdU4Y7e2WbKI9WkhAr7sOHAs8ETgLyZvWM+11OBwOh8PhcDgcDofD4XBMCfdI2zrS8NgL3Bt4JpIHbS9CoC2Zz2oFTSUwc3ONaTCJ19oBhMT7KvA44Hvhe+6V5nA4HA6Hw+FwOBwOh8OxCaTeBZvuNw3JTIHrAH8OvBS4GQXJ1UXIK62wmSLkliL2JJsUw0i03FxrJfze9ZAw0xZFAQSHw+FwOBwOh8PhcDgcU8M90oY0S/g7rnD3Ag4BnAKciRFWbjUSXepBlSHhlZ8RvbgZxOzUXWwvxTLsYeBTwCaYn7RwOh8PhcDgcDofD4XA4HA6Hw+FwOBzTRf4/7nKk03vYkPgAAAAASUVORK5CYII=';
 function shLogo(){
-  if (!G.logo) G.logo = new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = SH_LOGO; });
+  // logo opsional: kalau gagal decode, resolve null (jangan reject) biar Story tetap bisa render
+  if (!G.logo) G.logo = new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = SH_LOGO; });
   return G.logo;
 }
 const SH_ST = {white:['#FFFFFF',null], black:['#000000',null], wob:['#FFFFFF','#000000'], bow:['#000000','#FFFFFF']};
@@ -271,7 +272,7 @@ function shRender(cv, r, st, mode, bot) {
   ctx.clearRect(0, 0, cw, ch); ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round';
   for (const o of m.lay) {
     if (o.logo) {
-      const img = G.logo; const drawX = x0 + o.x, drawY = y0 + o.y;
+      const img = G.logo; if (!img) continue; const drawX = x0 + o.x, drawY = y0 + o.y;
       if (line) {
         ctx.save(); ctx.globalAlpha = 0.98;
         const pad = Math.max(2, Math.round(o.h * .045));
