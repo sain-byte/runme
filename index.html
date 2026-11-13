@@ -3,6 +3,7 @@
 <html lang="id" class="dark">
 <head>
 <meta charset="utf-8">
+<script>try{var _u=localStorage.getItem("ui");if(_u&&_u!=="default")document.documentElement.setAttribute("data-ui",_u)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Log Run - Hussain</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
@@ -40,6 +41,71 @@ html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; background:
 .card-pb.empty{background:var(--card);border-color:var(--border);opacity:.6}
 .card-pb.empty .pbl,.card-pb.empty .pbv{color:var(--muted)}
 </style>
+<style id="ui-styles">
+/* ===== Gaya UI (data-ui) — terpisah dari dark/light. Default = tanpa atribut ===== */
+/* transisi halus, aktif setelah halaman siap (biar ga kedip pas load) */
+html.ui-anim,html.ui-anim body{transition:background-color .3s ease,color .3s ease}
+html.ui-anim .card,html.ui-anim .btn,html.ui-anim .btn-icon,html.ui-anim .input,html.ui-anim .badge,html.ui-anim .glass{transition:background-color .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease,border-radius .3s ease}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}
+
+/* toast nama gaya */
+.ui-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,10px);opacity:0;pointer-events:none;z-index:70;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--text);border:1px solid var(--border-strong);box-shadow:0 8px 24px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:opacity .25s ease,transform .25s ease}
+.ui-toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* animasi modal (hanya untuk gaya non-default) */
+@keyframes uiFade{from{opacity:0}to{opacity:1}}
+@keyframes uiPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+html[data-ui] .fixed.inset-0:not(.hidden){animation:uiFade .22s ease both}
+html[data-ui] .fixed.inset-0:not(.hidden)>.card{animation:uiPop .3s cubic-bezier(.2,.8,.2,1) both}
+
+/* ---------- GLASS ---------- */
+html.dark[data-ui="glass"]{--card:rgba(255,255,255,.06);--card-hover:rgba(255,255,255,.10);--border:rgba(255,255,255,.14);--border-strong:rgba(255,255,255,.28)}
+html.light[data-ui="glass"]{--card:rgba(255,255,255,.55);--card-hover:rgba(255,255,255,.75);--border:rgba(255,255,255,.85);--border-strong:#fff}
+html[data-ui="glass"] body,html[data-ui="neon"] body{background:transparent}
+html[data-ui="glass"] body::before,html[data-ui="neon"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+html.dark[data-ui="glass"] body::before{background:radial-gradient(45vmax 45vmax at 10% 6%,rgba(214,255,87,.30),transparent 62%),radial-gradient(50vmax 50vmax at 95% 24%,rgba(99,102,241,.34),transparent 62%),radial-gradient(55vmax 55vmax at 25% 98%,rgba(20,184,166,.28),transparent 62%)}
+html.light[data-ui="glass"] body::before{background:radial-gradient(45vmax 45vmax at 10% 6%,rgba(163,230,53,.45),transparent 62%),radial-gradient(50vmax 50vmax at 95% 24%,rgba(129,140,248,.38),transparent 62%),radial-gradient(55vmax 55vmax at 25% 98%,rgba(45,212,191,.34),transparent 62%)}
+html[data-ui="glass"] .card:not([class*="rounded-b"]){border-radius:18px}
+html.dark[data-ui="glass"] .card{box-shadow:0 10px 34px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.14)}
+html.light[data-ui="glass"] .card{box-shadow:0 10px 30px rgba(60,70,140,.12),inset 0 1px 0 #fff}
+html[data-ui="glass"] .card:not([class*="space-y-1.5"]){-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%)}
+html[data-ui="glass"] .glass{-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.18)}
+html[data-ui="glass"] .btn,html[data-ui="glass"] .btn-icon,html[data-ui="glass"] .input{border-radius:12px}
+html[data-ui="glass"] .btn-lime{box-shadow:0 6px 18px rgba(214,255,87,.30)}
+
+/* ---------- NEON ---------- */
+html.dark[data-ui="neon"]{--bg:#030503;--card:#0A0D08;--card-hover:#10150C;--border:rgba(214,255,87,.20);--border-strong:rgba(214,255,87,.50);--lime-soft:rgba(214,255,87,.12)}
+html.light[data-ui="neon"]{--bg:#F3F7EA;--card:#FFFFFF;--card-hover:#F7FBEF;--border:rgba(101,163,13,.30);--border-strong:rgba(101,163,13,.65);--lime-soft:rgba(101,163,13,.13)}
+html[data-ui="neon"] body::before{background-size:30px 30px;-webkit-mask-image:linear-gradient(#000 0,transparent 70%);mask-image:linear-gradient(#000 0,transparent 70%)}
+html.dark[data-ui="neon"] body::before{background-image:linear-gradient(rgba(214,255,87,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(214,255,87,.07) 1px,transparent 1px)}
+html.light[data-ui="neon"] body::before{background-image:linear-gradient(rgba(101,163,13,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(101,163,13,.10) 1px,transparent 1px)}
+html[data-ui="neon"] .card:not([class*="rounded-b"]){border-radius:6px}
+html.dark[data-ui="neon"] .card{box-shadow:0 0 0 1px rgba(214,255,87,.05),0 0 22px -8px rgba(214,255,87,.38)}
+html.light[data-ui="neon"] .card{box-shadow:0 0 18px -8px rgba(101,163,13,.40)}
+html[data-ui="neon"] .glass{border-radius:8px;border-color:var(--border-strong);box-shadow:0 0 24px -8px var(--lime)}
+html[data-ui="neon"] .btn,html[data-ui="neon"] .btn-icon,html[data-ui="neon"] .input{border-radius:6px}
+html[data-ui="neon"] .btn:hover,html[data-ui="neon"] .btn-icon:hover{border-color:var(--lime);box-shadow:0 0 12px -3px var(--lime)}
+html[data-ui="neon"] .btn.on{box-shadow:0 0 12px -3px var(--lime)}
+html[data-ui="neon"] .btn-lime{box-shadow:0 0 16px -2px var(--lime)}
+html.dark[data-ui="neon"] .mono{text-shadow:0 0 8px rgba(214,255,87,.35)}
+
+/* ---------- SOFT ---------- */
+html.dark[data-ui="soft"]{--bg:#141417;--card:#1B1B20;--card-hover:#212127;--border:rgba(255,255,255,.05);--border-strong:rgba(255,255,255,.10)}
+html.light[data-ui="soft"]{--bg:#E4E8EF;--card:#ECEFF5;--card-hover:#F2F4F9;--border:rgba(0,0,0,.05);--border-strong:rgba(0,0,0,.10)}
+html[data-ui="soft"] .card,html[data-ui="soft"] .btn,html[data-ui="soft"] .btn-icon{border-color:transparent}
+html[data-ui="soft"] .card:not([class*="rounded-b"]){border-radius:22px}
+html[data-ui="soft"] .glass{border-radius:20px;border-color:transparent}
+html[data-ui="soft"] .btn,html[data-ui="soft"] .btn-icon,html[data-ui="soft"] .input{border-radius:14px}
+html.dark[data-ui="soft"] .card,html.dark[data-ui="soft"] .glass{box-shadow:8px 8px 20px rgba(0,0,0,.5),-6px -6px 16px rgba(255,255,255,.035)}
+html.light[data-ui="soft"] .card,html.light[data-ui="soft"] .glass{box-shadow:8px 8px 20px rgba(163,177,198,.55),-8px -8px 20px rgba(255,255,255,.9)}
+html.dark[data-ui="soft"] .btn,html.dark[data-ui="soft"] .btn-icon{box-shadow:4px 4px 10px rgba(0,0,0,.45),-3px -3px 8px rgba(255,255,255,.035)}
+html.light[data-ui="soft"] .btn,html.light[data-ui="soft"] .btn-icon{box-shadow:4px 4px 10px rgba(163,177,198,.5),-4px -4px 10px rgba(255,255,255,.9)}
+html.dark[data-ui="soft"] .btn:active,html.dark[data-ui="soft"] .btn.on,html.dark[data-ui="soft"] .input{box-shadow:inset 3px 3px 8px rgba(0,0,0,.5),inset -3px -3px 8px rgba(255,255,255,.03)}
+html.light[data-ui="soft"] .btn:active,html.light[data-ui="soft"] .btn.on,html.light[data-ui="soft"] .input{box-shadow:inset 3px 3px 8px rgba(163,177,198,.6),inset -3px -3px 8px rgba(255,255,255,.9)}
+html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
+
+@media (prefers-reduced-motion:reduce){html[data-ui] .fixed.inset-0,html[data-ui] .fixed.inset-0>.card{animation:none!important}html.ui-anim *{transition:none!important}}
+</style>
 </head>
 <body class="w-full overflow-x-hidden">
 <div id="login" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50" onclick="if(event.target===this)this.classList.add('hidden')">
@@ -55,7 +121,7 @@ html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; background:
 <div id="app" class="w-full max-w-[1440px] mx-auto p-2.5 space-y-2.5 overflow-x-hidden">
   <div class="glass sticky top-2 z-20 rounded-xl px-2.5 h-12 flex items-center justify-between w-full">
     <div class="flex items-center gap-2 min-w-0"><div class="w-7 h-7 shrink-0 rounded-[8px] bg-[var(--lime)] text-black flex items-center justify-center font-black text-[12px]">R5K°</div><div class="min-w-0"><div class="text-[14px] sm:text-[15px] font-bold leading-tight truncate">Log Run - Hussain</div><div class="flex items-center gap-1.5"><span class="text-[10px] sm:text-[11px] opacity-50 tracking-widest uppercase">Project 5K</span><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span id="role" class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border border-[var(--border)] uppercase font-bold opacity-70">VIEW</span></div></div></div>
-    <div class="flex items-center gap-1"><button id="themeToggle" class="btn-icon">🌗</button><button class="btn-icon hidden sm:flex" onclick="expCsv()" title="CSV">◧</button><button class="btn-icon" onclick="load()" title="Muat ulang">↻</button><button id="authBtn" class="btn" onclick="authClick()">Login</button></div>
+    <div class="flex items-center gap-1"><button id="themeToggle" class="btn-icon">🌗</button><button id="uiToggle" class="btn-icon" title="Gaya tampilan">🎨</button><button class="btn-icon hidden sm:flex" onclick="expCsv()" title="CSV">◧</button><button class="btn-icon" onclick="load()" title="Muat ulang">↻</button><button id="authBtn" class="btn" onclick="authClick()">Login</button></div>
   </div>
 
   <div class="grid grid-cols-2 sm:grid-cols-[150px_170px_1fr] gap-2 w-full">
@@ -114,6 +180,6 @@ html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; background:
 </div>
 
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(e){console.warn("SW gagal",e)})})}</script>
-<script src="./logic.js?v=4"></script>
+<script src="./logic.js?v=5"></script>
 </body>
 </html>

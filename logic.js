@@ -432,6 +432,34 @@ function expJson(){ dl('running_log.json', JSON.stringify(S.rows.map(r => ({no: 
   }
 })();
 
+// ===== Gaya UI (terpisah dari dark/light): Default, Glass, Neon, Soft =====
+(function(){
+  const UIS = [['default','Default'],['glass','Glass'],['neon','Neon'],['soft','Soft']];
+  const root = document.documentElement;
+  const cur = () => root.getAttribute('data-ui') || 'default';
+  const set = (id, save) => {
+    if (id === 'default') root.removeAttribute('data-ui'); else root.setAttribute('data-ui', id);
+    if (save) { try { localStorage.setItem('ui', id); } catch(e){} }
+  };
+  let saved = 'default'; try { saved = localStorage.getItem('ui') || 'default'; } catch(e){}
+  if (!UIS.some(u => u[0] === saved)) saved = 'default';
+  set(saved, false);
+  setTimeout(() => root.classList.add('ui-anim'), 150);
+  let tt, tEl;
+  const toast = t => {
+    if (!tEl) { tEl = document.createElement('div'); tEl.className = 'ui-toast'; document.body.appendChild(tEl); }
+    tEl.textContent = t; tEl.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => tEl.classList.remove('show'), 1400);
+  };
+  const btn = $('uiToggle');
+  if (btn) btn.onclick = () => {
+    const i = UIS.findIndex(u => u[0] === cur()), n = UIS[(i + 1) % UIS.length];
+    const go = () => set(n[0], true);
+    const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (document.startViewTransition && !calm) document.startViewTransition(go); else go();
+    toast('Gaya: ' + n[1]);
+  };
+})();
+
 $('go').onclick = async () => {
   $('err').textContent = ''; $('go').disabled = true;
   try {
