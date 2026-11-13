@@ -3,7 +3,7 @@
 <html lang="id" class="dark">
 <head>
 <meta charset="utf-8">
-<script>try{var _u=localStorage.getItem("ui");if(_u&&_u!=="default")document.documentElement.setAttribute("data-ui",_u)}catch(e){}</script>
+<script>try{var _d=document.documentElement,_u=localStorage.getItem("ui"),_z=localStorage.getItem("uiScale");if(_u&&_u!=="default")_d.setAttribute("data-ui",_u);if(_z==="90"||_z==="100")_d.setAttribute("data-scale",_z)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Log Run - Hussain</title>
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
@@ -41,6 +41,24 @@ html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; background:
 .card-pb.empty{background:var(--card);border-color:var(--border);opacity:.6}
 .card-pb.empty .pbl,.card-pb.empty .pbv{color:var(--muted)}
 </style>
+<style id="ui-scale">
+/* ===== Skala tampilan: default 80%, pilihan 80/90/100 (atribut data-scale di <html>) ===== */
+html{--ui-s:.8;font-size:calc(var(--ui-s) * 100%)}
+html[data-scale="90"]{--ui-s:.9}
+html[data-scale="100"]{--ui-s:1}
+/* ukuran px ikut diskalakan (minimal 9px biar tetap kebaca) */
+html .input,html .btn{font-size:max(9px,calc(13px * var(--ui-s)))}
+html .badge{font-size:max(9px,calc(12px * var(--ui-s)))}
+html .icon-grad{font-size:max(9px,calc(14px * var(--ui-s)))}
+html .text-\[10px\]{font-size:max(9px,calc(10px * var(--ui-s)))}
+html .text-\[11px\]{font-size:max(9px,calc(11px * var(--ui-s)))}
+html .text-\[12px\]{font-size:max(9px,calc(12px * var(--ui-s)))}
+html .text-\[13px\]{font-size:max(9px,calc(13px * var(--ui-s)))}
+html .text-\[14px\]{font-size:max(9px,calc(14px * var(--ui-s)))}
+html .text-\[15px\]{font-size:max(9px,calc(15px * var(--ui-s)))}
+html .text-\[17px\]{font-size:max(9px,calc(17px * var(--ui-s)))}
+html .text-\[20px\]{font-size:max(9px,calc(20px * var(--ui-s)))}
+</style>
 <style id="ui-styles">
 /* ===== Gaya UI (data-ui) — terpisah dari dark/light. Default = tanpa atribut ===== */
 /* transisi halus, aktif setelah halaman siap (biar ga kedip pas load) */
@@ -48,9 +66,6 @@ html.ui-anim,html.ui-anim body{transition:background-color .3s ease,color .3s ea
 html.ui-anim .card,html.ui-anim .btn,html.ui-anim .btn-icon,html.ui-anim .input,html.ui-anim .badge,html.ui-anim .glass{transition:background-color .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease,border-radius .3s ease}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}
 
-/* toast nama gaya */
-.ui-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,10px);opacity:0;pointer-events:none;z-index:70;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--text);border:1px solid var(--border-strong);box-shadow:0 8px 24px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:opacity .25s ease,transform .25s ease}
-.ui-toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* animasi modal (hanya untuk gaya non-default) */
 @keyframes uiFade{from{opacity:0}to{opacity:1}}
@@ -104,7 +119,8 @@ html.dark[data-ui="soft"] .btn:active,html.dark[data-ui="soft"] .btn.on,html.dar
 html.light[data-ui="soft"] .btn:active,html.light[data-ui="soft"] .btn.on,html.light[data-ui="soft"] .input{box-shadow:inset 3px 3px 8px rgba(163,177,198,.6),inset -3px -3px 8px rgba(255,255,255,.9)}
 html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
 
-@media (prefers-reduced-motion:reduce){html[data-ui] .fixed.inset-0,html[data-ui] .fixed.inset-0>.card{animation:none!important}html.ui-anim *{transition:none!important}}
+#uiMenu:not(.hidden){animation:uiPop .22s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){#uiMenu,html[data-ui] .fixed.inset-0,html[data-ui] .fixed.inset-0>.card{animation:none!important}html.ui-anim *{transition:none!important}}
 </style>
 </head>
 <body class="w-full overflow-x-hidden">
@@ -121,7 +137,7 @@ html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
 <div id="app" class="w-full max-w-[1440px] mx-auto p-2.5 space-y-2.5 overflow-x-hidden">
   <div class="glass sticky top-2 z-20 rounded-xl px-2.5 h-12 flex items-center justify-between w-full">
     <div class="flex items-center gap-2 min-w-0"><div class="w-7 h-7 shrink-0 rounded-[8px] bg-[var(--lime)] text-black flex items-center justify-center font-black text-[12px]">R5K°</div><div class="min-w-0"><div class="text-[14px] sm:text-[15px] font-bold leading-tight truncate">Log Run - Hussain</div><div class="flex items-center gap-1.5"><span class="text-[10px] sm:text-[11px] opacity-50 tracking-widest uppercase">Project 5K</span><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span id="role" class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border border-[var(--border)] uppercase font-bold opacity-70">VIEW</span></div></div></div>
-    <div class="flex items-center gap-1"><button id="themeToggle" class="btn-icon">🌗</button><button id="uiToggle" class="btn-icon" title="Gaya tampilan">🎨</button><button class="btn-icon hidden sm:flex" onclick="expCsv()" title="CSV">◧</button><button class="btn-icon" onclick="load()" title="Muat ulang">↻</button><button id="authBtn" class="btn" onclick="authClick()">Login</button></div>
+    <div class="flex items-center gap-1"><button id="themeToggle" class="btn-icon">🌗</button><button id="uiToggle" class="btn-icon" title="Tampilan: gaya &amp; ukuran">🎨</button><button class="btn-icon hidden sm:flex" onclick="expCsv()" title="CSV">◧</button><button class="btn-icon" onclick="load()" title="Muat ulang">↻</button><button id="authBtn" class="btn" onclick="authClick()">Login</button></div>
   </div>
 
   <div class="grid grid-cols-2 sm:grid-cols-[150px_170px_1fr] gap-2 w-full">
@@ -145,7 +161,7 @@ html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
   
   <div class="adm hidden card p-2.5 space-y-2 w-full">
     <textarea id="kal" rows="2" placeholder="Lari tgl 27 Agu 2026, jarak 5.19 km, waktu 40:13, pace 7:45..." class="input !h-auto py-2 resize-none"></textarea>
-    <div class="flex gap-1.5"><button class="btn btn-lime h-7" onclick="auto()">Auto-isi</button><button class="btn h-7" onclick="openForm()">+ Manual</button></div>
+    <div class="flex gap-1.5"><button class="btn btn-lime h-7" onclick="auto()">Auto-isi</button><button class="btn h-7" onclick="openForm()">+ Manual</button><button class="btn h-7" onclick="pasteAuto()">📋 Paste</button></div>
   </div>
 
   <!-- Desktop table -->
@@ -171,7 +187,7 @@ html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
     <select id="shS" class="input h-8" onchange="shDraw()"></select>
     <div id="shW" class="chk rounded-xl p-2 flex justify-center"><canvas id="shC" style="max-width:100%;max-height:38vh"></canvas></div>
     <div class="flex items-center justify-between text-[12px] opacity-70"><span>Latar preview</span><button class="btn !py-1" onclick="shBg()"><span id="shBgL">Kotak-kotak</span></button></div>
-    <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Template</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="tpl" data-v="poster" onclick="shSet('tpl','poster')">Poster (Anton)</button><button class="btn" data-g="tpl" data-v="strava" onclick="shSet('tpl','strava')">Grid (gaya Strava)</button></div></div>
+    <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Template</div><div id="shTpl" class="grid grid-cols-2 gap-2"></div></div>
     <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Gaya</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="st" data-v="white" onclick="shSet('st','white')">Putih</button><button class="btn" data-g="st" data-v="black" onclick="shSet('st','black')">Hitam</button><button class="btn" data-g="st" data-v="wob" onclick="shSet('st','wob')">Putih • outline hitam</button><button class="btn" data-g="st" data-v="bow" onclick="shSet('st','bow')">Hitam • outline putih</button></div></div>
     <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1">Ekspor</div><div class="grid grid-cols-2 gap-2"><button class="btn on" data-g="mode" data-v="tight" onclick="shSet('mode','tight')">Potong presisi</button><button class="btn" data-g="mode" data-v="full" onclick="shSet('mode','full')">Full portrait 9:16</button></div></div>
     <div id="shYW" class="hidden"><div class="flex justify-between text-[12px] opacity-70 mb-1"><span>Posisi (jarak dari bawah)</span><span id="shYL">440 px</span></div><input id="shY" type="range" min="300" max="700" step="10" value="440" class="w-full" oninput="shDraw()"></div>
@@ -180,6 +196,12 @@ html[data-ui="soft"] .btn-lime{box-shadow:0 6px 16px -4px var(--lime)}
 </div>
 
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(e){console.warn("SW gagal",e)})})}</script>
-<script src="./logic.js?v=5"></script>
+<div id="uiMenu" class="card hidden p-3 space-y-3" style="position:fixed;z-index:60;right:12px;width:min(260px,calc(100vw - 24px))">
+  <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1.5">Gaya</div><div id="uiStyles" class="grid grid-cols-2 gap-1.5"></div></div>
+  <div><div class="text-[11px] uppercase tracking-widest opacity-50 font-semibold mb-1.5">Ukuran</div><div id="uiScales" class="grid grid-cols-3 gap-1.5"></div></div>
+</div>
+<script src="./story-logo.js?v=1"></script>
+<script src="./story.js?v=1"></script>
+<script src="./logic.js?v=7"></script>
 </body>
 </html>
